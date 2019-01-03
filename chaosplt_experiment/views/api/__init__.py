@@ -7,10 +7,10 @@ from typing import Any, Dict, Union
 from flask import Blueprint, Flask, after_this_request, request, Response
 from flask_caching import Cache
 
-from chaos_experiment.auth import setup_jwt, setup_login
-from chaos_experiment.schemas import setup_schemas
-from chaos_experiment.service import Services
-from chaos_experiment.storage import ExperimentStorage, ExecutionStorage
+from chaosplt_experiment.auth import setup_jwt, setup_login
+from chaosplt_experiment.schemas import setup_schemas
+from chaosplt_experiment.service import Services
+from chaosplt_experiment.storage import ExperimentStorage, ExecutionStorage
 
 from .execution import api as execution_api
 from .experiment import api as experiment_api

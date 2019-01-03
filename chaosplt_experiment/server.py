@@ -19,6 +19,7 @@ from .views.web import create_app, cleanup_app, serve_experiment_app, \
     serve_execution_app
 
 __all__ = ["initialize_all", "release_all", "run_forever"]
+logger = logging.getLogger("chaosplatform")
 
 
 def initialize_all(config: Dict[str, Any], web_app: Flask = None,
@@ -34,6 +35,7 @@ def initialize_all(config: Dict[str, Any], web_app: Flask = None,
                        Flask, Flask, Services, Server, ExperimentStorage,
                        ExecutionStorage]:
     access_log_handler = access_log_handler or logging.StreamHandler()
+    logger.info("Initializing experiment service resources")
 
     embedded = True
     if not services:
@@ -72,19 +74,20 @@ def initialize_all(config: Dict[str, Any], web_app: Flask = None,
         if srv_addr:
             grpc_server = create_grpc_server(srv_addr)
             start_grpc_server(grpc_server)
-            cherrypy.log("gRPC server started on {}".format(srv_addr))
+            logger.info("gRPC server started on {}".format(srv_addr))
 
     return (web_app, api_app, services, grpc_server, experiment_storage,
             execution_storage)
 
 
-def release_all(services: Services, web_app: Flask, api_app: Flask,
+def release_all(web_app: Flask, api_app: Flask, services: Services,
                 grpc_server: Server, experiment_storage: ExperimentStorage,
                 execution_storage: ExecutionStorage):
+    logger.info("Releasing experiment service resources")
     if grpc_server:
-        cherrypy.log("gRPC server stopping")
+        logger.info("gRPC server stopping")
         stop_grpc_server(grpc_server)
-        cherrypy.log("gRPC server stopped")
+        logger.info("gRPC server stopped")
     cleanup_app(web_app)
     cleanup_api(api_app)
     shutdown_services(services)
@@ -99,12 +102,9 @@ def run_forever(config: Dict[str, Any]):
     when the application starts.
     """
     def run_stuff(config: Dict[str, Any]):
-        web, api, services, grpc_server, experiment_storage, \
-            execution_storage = initialize_all(config)
+        resources = initialize_all(config)
         cherrypy.engine.subscribe(
-            'stop', lambda: release_all(
-                services, web, api, grpc_server, experiment_storage,
-                execution_storage),
+            'stop', lambda: release_all(*resources),
             priority=20)
 
     cherrypy.engine.subscribe(

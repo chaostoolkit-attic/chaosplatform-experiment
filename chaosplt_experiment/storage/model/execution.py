@@ -4,7 +4,7 @@ from typing import Any, List, NoReturn, Union
 import uuid
 from uuid import UUID
 
-from chaos_relational_storage.db import Base
+from chaosplt_relational_storage.db import Base
 from sqlalchemy import Column, ForeignKey, String, UniqueConstraint, BigInteger
 from sqlalchemy.orm import defer
 from sqlalchemy.orm.session import Session

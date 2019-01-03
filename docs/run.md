@@ -24,6 +24,6 @@ Read the [settings][] documentation to know what values can be set.
 
 ## Dependencies
 
-The authentication service expects to find the account service via gRPC so it
+The experiment service expects to find the account service via gRPC so it
 can create accounts.
 

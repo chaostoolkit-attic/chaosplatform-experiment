@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from uuid import UUID
 from typing import Any, List, NoReturn, Union
 
-from chaos_experiment.model import Experiment, Execution
+from chaosplt_experiment.model import Experiment, Execution
 
 __all__ = ["BaseExperimentService", "BaseExecutionService"]
 

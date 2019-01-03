@@ -1,9 +1,9 @@
 from typing import Any, Dict, List, NoReturn, Union
 from uuid import UUID
 
-from chaos_experiment.model import Experiment, Execution
-from chaos_relational_storage import RelationalStorage
-from chaos_relational_storage.db import orm_session
+from chaosplt_experiment.model import Experiment, Execution
+from chaosplt_relational_storage import RelationalStorage
+from chaosplt_relational_storage.db import orm_session
 from .model import Experiment as ExperimentModel, Execution as ExecutionModel
 
 from .interface import BaseExperimentService, BaseExecutionService
