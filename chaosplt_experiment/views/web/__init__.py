@@ -4,11 +4,8 @@ from logging import StreamHandler
 import os
 from typing import Any, Dict, Union
 
-import cherrypy
 from flask import Blueprint, Flask, after_this_request, request, Response
 from flask_caching import Cache
-from requestlogger import ApacheFormatter, WSGILogger
-from werkzeug.contrib.fixers import ProxyFix
 
 from chaosplt_experiment.auth import setup_jwt
 from chaosplt_experiment.schemas import setup_schemas
@@ -57,26 +54,12 @@ def serve_experiment_app(app: Flask, cache: Cache, services: Services,
                          log_handler: StreamHandler = None):
     register_experiment_views(app, cache, services, storage)
 
-    log_handler = log_handler or logging.StreamHandler()
-    app.wsgi_app = ProxyFix(app.wsgi_app)
-    wsgiapp = WSGILogger(
-        app.wsgi_app, [log_handler], ApacheFormatter(),
-        propagate=False)
-    cherrypy.tree.graft(wsgiapp, mount_point)
-
 
 def serve_execution_app(app: Flask, cache: Cache, services: Services,
                         storage: ExperimentStorage, config: Dict[str, Any],
                         mount_point: str = '/execution',
                         log_handler: StreamHandler = None):
     register_execution_views(app, cache, services, storage)
-
-    log_handler = log_handler or logging.StreamHandler()
-    app.wsgi_app = ProxyFix(app.wsgi_app)
-    wsgiapp = WSGILogger(
-        app.wsgi_app, [log_handler], ApacheFormatter(),
-        propagate=False)
-    cherrypy.tree.graft(wsgiapp, mount_point)
 
 
 ###############################################################################

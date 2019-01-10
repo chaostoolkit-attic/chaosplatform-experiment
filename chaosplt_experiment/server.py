@@ -10,6 +10,7 @@ from flask_caching import Cache
 from grpc import Server
 
 from .cache import setup_cache
+from .log import http_requests_logger
 from .service import initialize_services, shutdown_services, Services
 from .storage import ExperimentStorage, ExecutionStorage, \
     initialize_storage, shutdown_storage
@@ -37,14 +38,12 @@ def initialize_all(config: Dict[str, Any], web_app: Flask = None,
     access_log_handler = access_log_handler or logging.StreamHandler()
     logger.info("Initializing experiment service resources")
 
-    embedded = True
-    if not services:
-        embedded = False
-        services = Services()
-
     experiment_storage, execution_storage = initialize_storage(config)
-    if embedded:
+    if not services:
+        services = Services()
+    if not services.experiment:
         services.experiment = experiment_storage
+    if not services.execution:
         services.execution = execution_storage
 
     initialize_services(services, config)
@@ -52,6 +51,8 @@ def initialize_all(config: Dict[str, Any], web_app: Flask = None,
     if not web_app:
         web_app = create_app(config)
         web_cache = setup_cache(web_app)
+        wsgiapp = http_requests_logger(web_app, access_log_handler)
+        cherrypy.tree.graft(wsgiapp, "/")
     serve_experiment_app(
         web_app, web_cache, services, experiment_storage, config,
         experiment_web_mount_point, log_handler=access_log_handler)
@@ -62,6 +63,8 @@ def initialize_all(config: Dict[str, Any], web_app: Flask = None,
     if not api_app:
         api_app = create_api(config)
         api_cache = setup_cache(api_app)
+        wsgiapp = http_requests_logger(api_app, access_log_handler)
+        cherrypy.tree.graft(wsgiapp, "/api/v1")
     serve_experiment_api(
         api_app, api_cache, services, experiment_storage, config,
         experiment_api_mount_point, log_handler=access_log_handler)
@@ -69,12 +72,7 @@ def initialize_all(config: Dict[str, Any], web_app: Flask = None,
         api_app, api_cache, services, execution_storage, config,
         execution_api_mount_point, log_handler=access_log_handler)
 
-    if not grpc_server:
-        srv_addr = config["GRPC_LISTEN_ADDR"]
-        if srv_addr:
-            grpc_server = create_grpc_server(srv_addr)
-            start_grpc_server(grpc_server)
-            logger.info("gRPC server started on {}".format(srv_addr))
+    grpc_server = initialize_grpc(config, grpc_server)
 
     return (web_app, api_app, services, grpc_server, experiment_storage,
             execution_storage)
@@ -113,3 +111,23 @@ def run_forever(config: Dict[str, Any]):
     cherrypy.engine.signals.subscribe()
     cherrypy.engine.start()
     cherrypy.engine.block()
+
+
+###############################################################################
+# Internals
+###############################################################################
+def initialize_grpc(config: Dict[str, Any],
+                    grpc_server: Server = None) -> Server:
+    """
+    Initialize the gRPC server
+
+    Create the server if not provided. This called by `initialize_all`.
+    """
+    if not grpc_server:
+        srv_addr = config["grpc"]["address"]
+        if srv_addr:
+            grpc_server = create_grpc_server(srv_addr)
+            start_grpc_server(grpc_server)
+            logger.info("gRPC server started on {}".format(srv_addr))
+
+    return grpc_server

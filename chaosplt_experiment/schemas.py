@@ -32,7 +32,7 @@ class ExperimentSchema(ma.Schema):
 class UploadExperimentSchema(ma.Schema):
     org = fields.UUID(required=True)
     workspace = fields.UUID(required=True)
-    payload = fields.Dict(keys=fields.String())
+    payload = fields.Dict(keys=fields.String(), required=True)
 
 
 class ExecutionSchema(ma.Schema):
@@ -57,7 +57,7 @@ class ExecutionSchema(ma.Schema):
 
 class UploadExecutionSchema(ma.Schema):
     experiment_id = fields.UUID(required=True)
-    journal = fields.Dict(keys=fields.String())
+    journal = fields.Dict(keys=fields.String(), required=True)
 
 
 upload_experiment_schema = UploadExperimentSchema()

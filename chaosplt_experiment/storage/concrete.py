@@ -37,7 +37,7 @@ class ExperimentService(BaseExperimentService):
                         workspace_id=experiment.workspace_id,
                         experiment_id=experiment.id
                     ) for execution in experiment.executions
-                ]
+                ] if experiment.executions else None
             )
 
     def get_chaosplatform_extension(self, experiment: Any) -> Dict[str, Any]:
@@ -122,7 +122,7 @@ class ExperimentService(BaseExperimentService):
                         workspace_id=experiment.workspace_id,
                         experiment_id=experiment.id
                     ) for execution in experiment.executions
-                ]
+                ] if experiment.executions else None
             )
 
     def list_by_user(self, user_id: Union[UUID, str]) -> List[Experiment]:

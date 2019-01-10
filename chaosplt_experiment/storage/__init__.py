@@ -1,6 +1,6 @@
 from typing import Any, Dict, NoReturn, Tuple
 
-from chaosplt_relational_storage import initialize_storage as init_storage, \
+from chaosplt_relational_storage import get_storage, \
     configure_storage, release_storage
 import pkg_resources
 
@@ -12,7 +12,7 @@ __all__ = ["initialize_storage", "shutdown_storage", "ExperimentStorage",
 
 class ExecutionStorage(ExecutionService):
     def __init__(self, config: Dict[str, Any]):
-        driver = init_storage(config)
+        driver = get_storage(config)
         configure_storage(driver)
         ExecutionService.__init__(self, driver)
 
@@ -22,7 +22,7 @@ class ExecutionStorage(ExecutionService):
 
 class ExperimentStorage(ExperimentService):
     def __init__(self, config: Dict[str, Any]):
-        driver = init_storage(config)
+        driver = get_storage(config)
         configure_storage(driver)
         ExperimentService.__init__(self, driver)
 
@@ -34,7 +34,7 @@ def initialize_storage(config: Dict[str, Any]) \
                        -> Tuple[ExperimentStorage, ExecutionStorage]:
     experiment_storage = None
     execution_storage = None
-    for plugin in pkg_resources.iter_entry_points('chaoshub.storage'):
+    for plugin in pkg_resources.iter_entry_points('chaosplatform.storage'):
         if plugin.name == "experiment":
             service_class = plugin.load()
             experiment_storage = service_class(config)

@@ -24,7 +24,7 @@ def load_settings(env_path: str):
         cherrypy.log("Loading: {}".format(env_path))
         load_dotenv(dotenv_path=env_path)
 
-    debug = True if os.getenv('CHAOSHUB_DEBUG') else False
+    debug = True if os.getenv('CHAOSPLATFORM_DEBUG') else False
     cherrypy.config.update({
         'server.socket_host': os.getenv('SERVER_LISTEN_ADDR'),
         'server.socket_port': int(os.getenv('SERVER_LISTEN_PORT', 8080)),
@@ -38,10 +38,13 @@ def load_settings(env_path: str):
     })
 
     config = {
-        'GRPC_LISTEN_ADDR': os.getenv("GRPC_LISTEN_ADDR"),
-        'DATABASE_URI': os.getenv("DATABASE_URI"),
         'debug': debug,
-        'grpc': {
+        "grpc": {
+            "address": os.getenv("GRPC_LISTEN_ADDR"),
+        },
+        "db": {
+            "uri": os.getenv("DATABASE_URI"),
+            "debug": debug
         }
     }
 
