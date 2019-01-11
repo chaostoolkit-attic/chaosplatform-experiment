@@ -1,16 +1,13 @@
 graft tests
 
-include .bumpversion.cfg
 include .coveragerc
-include .cookiecutterrc
 include .editorconfig
 
-include AUTHORS.rst
-include CHANGELOG.rst
-include CONTRIBUTING.rst
+include CHANGELOG.md
 include LICENSE
-include README.rst
-
-include .travis.yml
+include README.md
+include requirements.txt
+include requirements-dev.txt
+include chaosplt_experiment/logging.json
 
 global-exclude *.py[cod] __pycache__
