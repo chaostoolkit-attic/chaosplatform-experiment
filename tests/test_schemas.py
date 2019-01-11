@@ -7,8 +7,8 @@ from chaosplt_experiment.schemas import upload_experiment_schema, \
     experiment_schema, upload_execution_schema, execution_schema, \
     executions_schema
 from flask import Flask
-import pytest
 from marshmallow.exceptions import ValidationError
+import pytest
 
 
 def test_experiment_schema_requires_user_id(experiment_request: Dict[str, Any]):
@@ -17,7 +17,7 @@ def test_experiment_schema_requires_user_id(experiment_request: Dict[str, Any]):
     
     with pytest.raises(ValidationError) as x:
         e = experiment_schema.load(r)
-    assert "user_id" in x.value.field_names
+    assert "user_id" in x.value.messages
 
 
 def test_experiment_schema_requires_org_id(experiment_request: Dict[str, Any]):
@@ -26,7 +26,7 @@ def test_experiment_schema_requires_org_id(experiment_request: Dict[str, Any]):
     
     with pytest.raises(ValidationError) as x:
         e = experiment_schema.load(r)
-    assert "org_id" in x.value.field_names
+    assert "org_id" in x.value.messages
 
 
 def test_experiment_schema_requires_workspace_id(experiment_request: Dict[str, Any]):
@@ -35,7 +35,7 @@ def test_experiment_schema_requires_workspace_id(experiment_request: Dict[str, A
     
     with pytest.raises(ValidationError) as x:
         e = experiment_schema.load(r)
-    assert "workspace_id" in x.value.field_names
+    assert "workspace_id" in x.value.messages
 
 
 def test_experiment_schema(experiment_request: Dict[str, Any], user_id: UUID,
@@ -96,7 +96,7 @@ def test_execution_schema_requires_user_id(execution_request: Dict[str, Any]):
     
     with pytest.raises(ValidationError) as x:
         e = execution_schema.load(r)
-    assert "user_id" in x.value.field_names
+    assert "user_id" in x.value.messages
 
 
 def test_experiment_schema_requires_org_id(execution_request: Dict[str, Any]):
@@ -105,7 +105,7 @@ def test_experiment_schema_requires_org_id(execution_request: Dict[str, Any]):
     
     with pytest.raises(ValidationError) as x:
         e = execution_schema.load(r)
-    assert "org_id" in x.value.field_names
+    assert "org_id" in x.value.messages
 
 
 def test_execution_schema_requires_workspace_id(execution_request: Dict[str, Any]):
@@ -114,7 +114,7 @@ def test_execution_schema_requires_workspace_id(execution_request: Dict[str, Any
     
     with pytest.raises(ValidationError) as x:
         e = execution_schema.load(r)
-    assert "workspace_id" in x.value.field_names
+    assert "workspace_id" in x.value.messages
 
 
 def test_execution_schema_requires_experiment_id(execution_request: Dict[str, Any]):
@@ -123,7 +123,7 @@ def test_execution_schema_requires_experiment_id(execution_request: Dict[str, An
     
     with pytest.raises(ValidationError) as x:
         e = execution_schema.load(r)
-    assert "experiment_id" in x.value.field_names
+    assert "experiment_id" in x.value.messages
 
 
 def test_upload_experiment(org_id: UUID, workspace_id: UUID,
@@ -145,7 +145,7 @@ def test_upload_experiment_requires_org(workspace_id: UUID,
             "workspace": workspace_id,
             "payload": experiment
         })
-    assert "org" in x.value.field_names
+    assert "org" in x.value.messages
 
 
 def test_upload_experiment_requires_workspace(org_id: UUID,
@@ -155,7 +155,7 @@ def test_upload_experiment_requires_workspace(org_id: UUID,
             "org": org_id,
             "payload": experiment
         })
-    assert "workspace" in x.value.field_names
+    assert "workspace" in x.value.messages
 
 
 def test_upload_experiment_requires_experiment(org_id: UUID, workspace_id: UUID):
@@ -164,7 +164,7 @@ def test_upload_experiment_requires_experiment(org_id: UUID, workspace_id: UUID)
             "workspace": workspace_id,
             "org": org_id
         })
-    assert "payload" in x.value.field_names
+    assert "payload" in x.value.messages
 
 
 def test_upload_execution_requires_experiment_id(journal: Dict[str, Any]):
@@ -172,7 +172,7 @@ def test_upload_execution_requires_experiment_id(journal: Dict[str, Any]):
         upload_execution_schema.load({
             "payload": journal
         })
-    assert "experiment_id" in x.value.field_names
+    assert "experiment_id" in x.value.messages
 
 
 def test_upload_execution_requires_journal(experiment_id: UUID):
@@ -180,4 +180,4 @@ def test_upload_execution_requires_journal(experiment_id: UUID):
         upload_execution_schema.load({
             "experiment_id": experiment_id
         })
-    assert "journal" in x.value.field_names
+    assert "journal" in x.value.messages
