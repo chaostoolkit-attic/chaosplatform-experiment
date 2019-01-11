@@ -56,7 +56,7 @@ setup(
     tests_require=test_require,
     setup_requires=pytest_runner,
     zip_safe=False,
-    python_requires='>=3.7.*',
+    python_requires='>=3.6.*',
     project_urls={
         'CI: Travis': 'https://travis-ci.org/chaostoolkit/chaosplatform-experiment',
         'Docs: RTD': 'https://docs.chaosplatform.org',
