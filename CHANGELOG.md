@@ -6,7 +6,7 @@
 
 ## [0.1.2][] - 2018-01-12
 
-[0.1.2]: https://github.com/chaostoolkit/chaosplatform-auth/compare/0.1.1...0.1.2
+[0.1.2]: https://github.com/chaostoolkit/chaosplatform-experiment/compare/0.1.1...0.1.2
 
 ### Changed
 
