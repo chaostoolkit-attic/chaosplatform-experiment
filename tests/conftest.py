@@ -26,12 +26,12 @@ from chaosplt_experiment.storage import ExperimentStorage, ExecutionStorage, \
 
 cur_dir = os.path.abspath(os.path.dirname(__file__))
 fixtures_dir = os.path.join(cur_dir, "fixtures")
-env_path = os.path.join(fixtures_dir, '.env')
+config_path = os.path.join(fixtures_dir, 'config.toml')
 
 
 @pytest.fixture
 def config() -> Dict[str, Any]:
-    return load_settings(env_path)
+    return load_settings(config_path)
 
 
 @pytest.fixture

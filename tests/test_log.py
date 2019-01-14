@@ -17,28 +17,7 @@ def test_configure_logger_with_embedded_config(config: Dict[str, Any]):
     try:
         configure_logger(None, config)
         assert logger.propagate is False
-        assert logger.level == logging.INFO
-        assert len(logger.handlers) == 1
-        h = logger.handlers[0]
-        assert isinstance(h, StreamHandler)
-        assert h.level == logging.INFO
-    finally:
-        clean_logger()
-
-
-
-def test_override_log_level(config: Dict[str, Any]):
-    config = config.copy()
-    config["debug"] = True
-
-    logger = logging.getLogger("chaosplatform")
-    assert len(logger.handlers) == 0
-
-    try:
-        configure_logger(None, config)
-        assert logger.propagate is False
         assert logger.level == logging.DEBUG
-
         assert len(logger.handlers) == 1
         h = logger.handlers[0]
         assert isinstance(h, StreamHandler)
@@ -47,8 +26,31 @@ def test_override_log_level(config: Dict[str, Any]):
         clean_logger()
 
 
+
+def test_override_log_level(config: Dict[str, Any]):
+    config = config.copy()
+    config["debug"] = False
+
+    logger = logging.getLogger("chaosplatform")
+    assert len(logger.handlers) == 0
+
+    try:
+        configure_logger(None, config)
+        assert logger.propagate is False
+        assert logger.level == logging.INFO
+
+        assert len(logger.handlers) == 1
+        h = logger.handlers[0]
+        assert isinstance(h, StreamHandler)
+        assert h.level == logging.INFO
+    finally:
+        clean_logger()
+
+
 def test_configure_logger_with_specific_config(config: Dict[str, Any]):
     logger = logging.getLogger("chaosplatform")
+    config = config.copy()
+    config["debug"] = False
     assert len(logger.handlers) == 0
 
     try:

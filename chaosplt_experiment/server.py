@@ -124,7 +124,7 @@ def initialize_grpc(config: Dict[str, Any],
     Create the server if not provided. This called by `initialize_all`.
     """
     if not grpc_server:
-        srv_addr = config["grpc"]["address"]
+        srv_addr = config.get("grpc", {}).get("address")
         if srv_addr:
             grpc_server = create_grpc_server(srv_addr)
             start_grpc_server(grpc_server)

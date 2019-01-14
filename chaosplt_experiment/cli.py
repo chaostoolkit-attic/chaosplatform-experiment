@@ -1,6 +1,7 @@
 import click
 
 from . import __version__
+from .log import configure_logger
 from .server import run_forever
 from .settings import load_settings
 
@@ -12,12 +13,16 @@ def cli():
 
 
 @cli.command()
-@click.option('--env-path',
+@click.option('--config',
               type=click.Path(exists=True, readable=True, resolve_path=True),
-              help='Dot env file or directory path.')
-def run(env_path: str):
+              help='Configuration TOML file.')
+@click.option('--logger-config',
+              type=click.Path(exists=False, readable=True, resolve_path=True),
+              help='Python logger JSON definition.')
+def run(config: str = None, logger_config: str = None):
     """
     Runs the application.
     """
-    config = load_settings(env_path)
+    config = load_settings(config)
+    configure_logger(logger_config, config)
     run_forever(config)
